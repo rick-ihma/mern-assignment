@@ -11,18 +11,19 @@ app.use(cors());
 app.use(express.json());
 
 const uri = process.env.ATLAS_URI;
-mongoose.connect(uri, { useNewUrlParser: true, useCreateIndex: true });
+mongoose.connect(uri, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+  useCreateIndex: true
+});
 
 const connection = mongoose.connection;
 connection.once("open", () => {
   console.log("MongoDB successfulFly");
 });
 
-const usersRouter = require("./routes/users");
-const customersRouter = require("./routes/customers");
-
-app.use("/users", usersRouter);
-app.use("/customers", customersRouter);
+app.use("/users", require("./routes/userRouter"));
+app.use("/customers", require("./routes/customerRouter"));
 
 app.listen(port, () => {
   console.log(`SERVER IS RUNNING ON PORT: ${port}`);
