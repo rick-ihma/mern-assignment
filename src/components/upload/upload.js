@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import ReactFileReader from "react-file-reader";
-import "./upload.component.css";
+import "./upload.css";
+import { parse } from "papaparse";
 
 export default function Upload(props) {
   const [fileName, setFileName] = useState("");
@@ -8,7 +9,10 @@ export default function Upload(props) {
   const handleFiles = files => {
     var reader = new FileReader();
     reader.onload = e => {
-      props.onHandleFiles(reader.result);
+      const result = parse(reader.result, {
+        skipEmptyLines: true,
+      });
+      props.onHandleFiles(result);
     };
     reader.readAsText(files[0]);
     setFileName(files[0].name);

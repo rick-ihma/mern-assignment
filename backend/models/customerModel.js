@@ -4,14 +4,15 @@ const Schema = mongoose.Schema;
 
 const customerSchema = new Schema(
   {
-    username: {
-      type: String,
-      require: true,
-    },
-    type:{
-      type: String,
+    data: {
+      type: Object,
       require: true
-    }
+    },
+    user: {
+      type: mongoose.Schema.Types.ObjectId,
+      require: true,
+      ref:'User'
+    },
   },
   {
     timestamps: true

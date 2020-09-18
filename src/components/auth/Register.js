@@ -1,6 +1,7 @@
 import React, { useState, useContext } from "react";
 import { useHistory } from "react-router-dom";
 import UserContext from "../../context/UserContext";
+import ErrorNotice from "../error/ErrorNotice";
 import Axios from "axios";
 
 export default function Register() {
@@ -8,27 +9,39 @@ export default function Register() {
   const [displayName, setdisplayName] = useState();
   const [password, setpassword] = useState();
   const [passwordCheck, setPasswordCheck] = useState();
+  const [error, setError] = useState();
 
   const { setUserData } = useContext(UserContext);
   const history = useHistory();
 
-  const submit = async (e) => {
+  const submit = async e => {
     e.preventDefault();
-    const newUser = { email, displayName, password, passwordCheck };
-    await Axios.post("http://localhost:5000/users/register", newUser);
-    const loginResponse = await Axios.post(
-      "http://localhost:5000/users/login",
-      { email, password }
-    );
-    setUserData({
-      token: loginResponse.data.token,
-      user: loginResponse.data.user
-    });
-    localStorage.setItem("auth-token", loginResponse.data.token);
-    history.push("/");
+    try {
+      const newUser = { email, displayName, password, passwordCheck };
+      await Axios.post("http://localhost:5000/users/register", newUser);
+      const loginResponse = await Axios.post(
+        "http://localhost:5000/users/login",
+        { email, password }
+      );
+      setUserData({
+        token: loginResponse.data.token,
+        user: loginResponse.data.user
+      });
+      localStorage.setItem("auth-token", loginResponse.data.token);
+      history.push("/");
+    } catch (err) {
+      err.response.data.error && setError(err.response.data.error);
+    }
   };
   return (
     <div className="container mt-5">
+      <h3>Register</h3>
+      {error && (
+        <ErrorNotice
+          messageError={error}
+          clearError={() => setError(undefined)}
+        />
+      )}
       <form onSubmit={submit}>
         <div className="form-group">
           <label htmlFor="inputEmail1">Email address</label>

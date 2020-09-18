@@ -110,4 +110,17 @@ router.get("/", auth, async (req, res) => {
   });
 });
 
+router.get("/customers", auth, async (req, res) => {
+  try {
+    console.log(req.params)
+    const data = await User.find().populate({
+      path: "customers",
+      select: "data"
+    });
+    res.json(data);
+  } catch (e) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 module.exports = router;
