@@ -7,9 +7,11 @@ import Navbar from "./components/navbar/navbar";
 import Home from "./pages/Home";
 import Login from "./components/auth/Login";
 import Register from "./components/auth/Register";
-import Customers from './pages/Customers'
-
+import Customers from "./pages/Customers";
 import UserContext from "./context/UserContext";
+import { useDispatch } from "react-redux";
+import allActions from "./store/actions";
+
 import "./App.css";
 
 export default function App() {
@@ -17,6 +19,7 @@ export default function App() {
     token: undefined,
     user: undefined
   });
+  const dispatch = useDispatch();
 
   useEffect(() => {
     const checkLoggedIn = async () => {
@@ -28,21 +31,23 @@ export default function App() {
       const tokenResponse = await Axios.post(
         "http://localhost:5000/users/tokenIsValid",
         null,
-        { headers: { "x-auth-token": token } }
+        { headers: { "auth-token": token } }
       );
       if (tokenResponse.data) {
         const userResponse = await Axios.get("http://localhost:5000/users/", {
-          headers: { "x-auth-token": token }
+          headers: { "auth-token": token }
         });
         setUserData({
           token,
           user: userResponse.data
         });
+        dispatch(allActions.userActions.setUser(userResponse.data));
+        return userData;
       }
     };
 
     checkLoggedIn();
-  }, []);
+  }, [dispatch, userData]);
 
   return (
     <BrowserRouter>

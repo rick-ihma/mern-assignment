@@ -2,14 +2,20 @@ import React, { useState, useContext } from "react";
 import { useHistory } from "react-router-dom";
 import ErrorNotice from "../error/ErrorNotice";
 import UserContext from "../../context/UserContext";
+import {  useDispatch } from "react-redux";
 import Axios from "axios";
+import allActions from '../../store/actions'
+
 
 export default function Login() {
   const [email, setEmail] = useState();
   const [password, setpassword] = useState();
   const [error, setError] = useState();
+
   const { setUserData } = useContext(UserContext);
   const history = useHistory();
+
+  const dispatch = useDispatch();
 
   const submit = async e => {
     e.preventDefault();
@@ -19,16 +25,21 @@ export default function Login() {
         "http://localhost:5000/users/login",
         loginUser
       );
+      if (loginResponse.data.success) {
+        dispatch(allActions.userActions.setUser(loginResponse.data.user))
+      }
       setUserData({
         token: loginResponse.data.token,
         user: loginResponse.data.user
       });
+
       localStorage.setItem("auth-token", loginResponse.data.token);
       history.push("/");
     } catch (err) {
       err.response.data.error && setError(err.response.data.error);
     }
   };
+
   return (
     <div className="container mt-5">
       <h3>Login</h3>

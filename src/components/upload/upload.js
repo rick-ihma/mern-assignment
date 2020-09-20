@@ -9,10 +9,14 @@ export default function Upload(props) {
   const handleFiles = files => {
     var reader = new FileReader();
     reader.onload = e => {
-      const result = parse(reader.result, {
-        skipEmptyLines: true,
+      const resultWithHeader = parse(reader.result, {
+        header: true,
+        skipEmptyLines: true
       });
-      props.onHandleFiles(result);
+      const result = parse(reader.result, {
+        skipEmptyLines: true
+      });
+      props.onHandleFiles(resultWithHeader, result);
     };
     reader.readAsText(files[0]);
     setFileName(files[0].name);

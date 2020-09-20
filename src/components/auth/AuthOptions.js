@@ -1,11 +1,13 @@
 import React, { useContext } from "react";
 import { useHistory } from "react-router-dom";
 import UserContext from "../../context/UserContext";
-
+import { useDispatch } from "react-redux";
+import allActions from "../../store/actions";
 export default function AuthOptions() {
   const { userData, setUserData } = useContext(UserContext);
 
   const history = useHistory();
+  const dispatch = useDispatch();
 
   const register = () => history.push("/register");
   const login = () => history.push("/login");
@@ -14,6 +16,7 @@ export default function AuthOptions() {
       token: undefined,
       user: undefined
     });
+    dispatch(allActions.userActions.logOut());
     localStorage.setItem("auth-token", "");
   };
 
