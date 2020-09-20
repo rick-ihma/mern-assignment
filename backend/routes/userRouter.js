@@ -3,6 +3,7 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const auth = require("../middleware/auth");
 let User = require("../models/userModel");
+let Customer = require("../models/customerModel");
 
 router.post("/register", async (req, res) => {
   try {
@@ -62,6 +63,7 @@ router.post("/login", async (req, res) => {
     }
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET);
     res.json({
+      success: true,
       token,
       user: {
         id: user._id,
@@ -84,7 +86,7 @@ router.delete("/delete", auth, async (req, res) => {
 
 router.post("/tokenIsValid", async (req, res) => {
   try {
-    const token = req.header("x-auth-token");
+    const token = req.header("auth-token");
     if (!token) {
       return res.json(false);
     }
@@ -105,19 +107,29 @@ router.post("/tokenIsValid", async (req, res) => {
 router.get("/", auth, async (req, res) => {
   const user = await User.findById(req.user);
   res.json({
-    displayName: user.displayName,
-    id: user._id
+    user
   });
 });
 
-router.get("/customers", auth, async (req, res) => {
+router.get("/:userId/customers", auth, async (req, res) => {
   try {
-    console.log(req.params)
-    const data = await User.find().populate({
-      path: "customers",
-      select: "data"
-    });
+    const { userId } = req.params;
+    const data = await User.findOne({ _id: userId }).populate("customers");
     res.json(data);
+  } catch (e) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+router.post("/:userId/customers/add", auth, async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const customer = await Customer.collection.insertMany(req.body.data);
+    const user = await User.findById({ _id: userId }).populate("customers");
+    const result = user.customers.concat(customer.ops);
+    user.customers = result;
+    await user.save();
+    res.json({ success: true, customers: result });
   } catch (e) {
     res.status(500).json({ error: err.message });
   }
