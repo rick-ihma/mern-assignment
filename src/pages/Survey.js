@@ -13,7 +13,7 @@ export default function Customers() {
     message: "",
     type: ""
   });
-  const currentUser = useSelector(state => state.currentUser.user);
+  const currentUser = useSelector(state => state.currentUser);
 
   const UploadFile = (fileHeader, file) => {
     const header = file.data.splice(0, 1).flat();

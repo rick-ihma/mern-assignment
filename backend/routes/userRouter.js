@@ -114,7 +114,7 @@ router.get("/", auth, async (req, res) => {
 router.get("/:userId/customers", auth, async (req, res) => {
   try {
     const { userId } = req.params;
-    const data = await User.findOne({ _id: userId }).populate("customers");
+    const data = await User.findById({ _id: userId }).populate("customers");
     res.json(data);
   } catch (e) {
     res.status(500).json({ error: err.message });
