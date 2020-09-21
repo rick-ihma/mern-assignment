@@ -7,7 +7,7 @@ import Navbar from "./components/navbar/navbar";
 import Home from "./pages/Home";
 import Login from "./components/auth/Login";
 import Register from "./components/auth/Register";
-import Customers from "./pages/Customers";
+import Survey from "./pages/Survey";
 import UserContext from "./context/UserContext";
 import { useDispatch } from "react-redux";
 import allActions from "./store/actions";
@@ -39,15 +39,14 @@ export default function App() {
         });
         setUserData({
           token,
-          user: userResponse.data
+          user: userResponse.data.user
         });
-        dispatch(allActions.userActions.setUser(userResponse.data));
+        dispatch(allActions.userActions.setUser(userResponse.data.user));
         return userData;
       }
     };
-
     checkLoggedIn();
-  }, [dispatch, userData]);
+  }, []);
 
   return (
     <BrowserRouter>
@@ -55,9 +54,9 @@ export default function App() {
         <Navbar />
         <Switch>
           <Route path="/" exact component={Home}></Route>
+          <Route path="/survey" component={Survey}></Route>
           <Route path="/login" component={Login}></Route>
           <Route path="/register" component={Register}></Route>
-          <Route path="/customers" component={Customers}></Route>
         </Switch>
       </UserContext.Provider>
     </BrowserRouter>

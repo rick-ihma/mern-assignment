@@ -2,10 +2,9 @@ import React, { useState, useContext } from "react";
 import { useHistory } from "react-router-dom";
 import ErrorNotice from "../error/ErrorNotice";
 import UserContext from "../../context/UserContext";
-import {  useDispatch } from "react-redux";
+import { useDispatch } from "react-redux";
 import Axios from "axios";
-import allActions from '../../store/actions'
-
+import allActions from "../../store/actions";
 
 export default function Login() {
   const [email, setEmail] = useState();
@@ -19,25 +18,18 @@ export default function Login() {
 
   const submit = async e => {
     e.preventDefault();
-    try {
-      const loginUser = { email, password };
-      const loginResponse = await Axios.post(
-        "http://localhost:5000/users/login",
-        loginUser
-      );
-      if (loginResponse.data.success) {
-        dispatch(allActions.userActions.setUser(loginResponse.data.user))
-      }
-      setUserData({
-        token: loginResponse.data.token,
-        user: loginResponse.data.user
-      });
-
-      localStorage.setItem("auth-token", loginResponse.data.token);
-      history.push("/");
-    } catch (err) {
-      err.response.data.error && setError(err.response.data.error);
-    }
+    const loginUser = { email, password };
+    const loginResponse = await Axios.post(
+      "http://localhost:5000/users/login",
+      loginUser
+    );
+    dispatch(allActions.userActions.setUser(loginResponse.data.user));
+    setUserData({
+      token: loginResponse.data.token,
+      user: loginResponse.data.user
+    });
+    localStorage.setItem("auth-token", loginResponse.data.token);
+    history.push("/");
   };
 
   return (
