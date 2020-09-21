@@ -45,9 +45,8 @@ export default function App() {
         return userData;
       }
     };
-
     checkLoggedIn();
-  }, [dispatch, userData]);
+  }, []);
 
   return (
     <BrowserRouter>
